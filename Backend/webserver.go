@@ -26,7 +26,7 @@ func SetupRoutes(app *fiber.App, dbService *Database.DBService) {
 	api := app.Group("/api/v1")
 
 	api.Post("/todos", requestHandler.CreateTodoHandler)
-	// api.Delete("/todos")
+	api.Delete("/todos", requestHandler.DeleteTodoHandler)
 
 
 	api.Get("/health", func(c *fiber.Ctx) error {

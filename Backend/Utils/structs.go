@@ -21,6 +21,10 @@ type CreateTodoRequest struct {
 	Description string `json:"description"`
 }
 
+type DeleteTodoRequest struct {
+	ID			string `json:"id"`
+}
+
 
 //? Response types
 type APIResponse struct {

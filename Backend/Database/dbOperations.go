@@ -32,3 +32,26 @@ func (s *DBService) CreateTodo(req *Utils.CreateTodoRequest) (*Utils.Todo, error
 	return &todo, nil
 }
 
+
+func (s *DBService) DeleteTodo(req *Utils.DeleteTodoRequest) error {
+	query :=
+	`DELETE FROM "todo_items"
+	WHERE id = $1
+	`
+	
+	result, err := s.db.Exec(query, req.ID)
+	if err != nil {
+		return fmt.Errorf("failed to delete todo: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("failed to check delete result: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("todo with id %s not found", req.ID)
+	}
+
+	return nil
+}
