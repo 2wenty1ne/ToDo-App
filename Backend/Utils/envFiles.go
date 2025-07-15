@@ -1,4 +1,4 @@
-package Config
+package Utils
 
 import (
 	"fmt"
@@ -53,6 +53,19 @@ func GetDBPassword() string {
 func GetDBName() string {
 	key := "DB_NAME"
     return readEnvValue(key, "", true)
+}
+
+func GetDevMode() bool {
+	key := "DEV_MODE"
+	devModeString := readEnvValue(key, "false")
+
+	devMode, err := strconv.ParseBool(devModeString)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return devMode
 }
 
 

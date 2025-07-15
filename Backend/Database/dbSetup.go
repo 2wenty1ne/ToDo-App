@@ -1,12 +1,18 @@
-package Config
+package Database
 
 import (
 	"database/sql"
 	"fmt"
 	"log"
 
+	"github.com/2wenty1ne/ToDo-App/Utils"
+
 	_ "github.com/lib/pq"
 )
+
+type DBService struct {
+	db *sql.DB
+}
 
 var (
     host     string
@@ -16,29 +22,29 @@ var (
     dbname   string
 )
 
-func DBConn() *sql.DB {
-	host     = GetDBHost()
-    port     = GetDBPort()
-    user     = GetDBUser()
-    password = GetDBPassword()
-    dbname   = GetDBName()
+func DBConn() *DBService {
+	host     = Utils.GetDBHost()
+    port     = Utils.GetDBPort()
+    user     = Utils.GetDBUser()
+    password = Utils.GetDBPassword()
+    dbname   = Utils.GetDBName()
 
 	psqlconn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 
 	db, err := sql.Open("postgres", psqlconn)
-	CheckError(err)
+	Utils.CheckError(err)
 
 
 	err = db.Ping()
-	CheckError(err)
+	Utils.CheckError(err)
 
 
 	log.Printf("Connection to Database established")
 	
-	return db
+	return &DBService{db: db}
 }
 
-func CloseDB(db *sql.DB) {
+func (r *DBService) CloseDB() {
 	log.Printf("Closing connection to Database")
-	db.Close()
+	r.db.Close()
 }
