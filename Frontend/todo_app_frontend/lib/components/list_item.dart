@@ -45,8 +45,8 @@ class ListItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Textfield(content: title, fontSize: 20,),
-                  Textfield(content: amountText, fontSize: 14)
+                  CustomText(content: title, fontSize: 20,),
+                  CustomText(content: amountText, fontSize: 14)
                 ],
               )
             ],
@@ -57,11 +57,11 @@ class ListItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 0),
+                padding: EdgeInsets.only(right: 5),
                 child: Icon(
                   Icons.arrow_forward_ios,
                   color: colors.textColor,
-                  size: 35
+                  size: 28
                 ),
               ),
               Padding(

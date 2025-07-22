@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app_frontend/main.dart';
 
-class Textfield extends StatelessWidget {
+class CustomText extends StatelessWidget {
   final String content;
   final double fontSize;
 
-  const Textfield({
+  const CustomText({
     super.key,
     required this.content,
     required this.fontSize

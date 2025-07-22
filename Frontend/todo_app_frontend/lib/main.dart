@@ -5,6 +5,7 @@ import 'package:todo_app_frontend/pages/todo_list_overview.dart';
 extension AppColors on ColorScheme {
   Color get backgroundColor => Color(0xFF2E073F);
   Color get secondBackgroundColor => Color(0xFF7A1CAC);
+  Color get selectionColor => Color(0xFFAD49E1);
   Color get textColor => Color(0xFFEBD3F8);
 }
 
@@ -19,9 +20,14 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: TodoListOverview(),
+      theme: ThemeData(
+        scaffoldBackgroundColor: colors.backgroundColor
+      )
     );
   }
 }
