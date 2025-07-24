@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_app_frontend/pages/todo_list_overview.dart';
+import 'package:todo_app_frontend/providers/todo_app_provider.dart';
 
 
 extension AppColors on ColorScheme {
@@ -17,17 +19,21 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: TodoListOverview(),
-      theme: ThemeData(
-        scaffoldBackgroundColor: colors.backgroundColor
-      )
+    return ChangeNotifierProvider(
+      create: (context) => TodoAppProvider(),
+
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: "Todo App",
+        home: TodoListOverview(),
+        theme: ThemeData(
+          scaffoldBackgroundColor: colors.backgroundColor
+        )
+      ),
     );
   }
 }
