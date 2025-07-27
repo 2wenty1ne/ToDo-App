@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app_frontend/components/header.dart';
 import 'package:todo_app_frontend/main.dart';
+import 'package:todo_app_frontend/models/todo_list.dart';
 
 
-class TodoList extends StatelessWidget {
-  final String pageTitle;
+class TodoListPage extends StatelessWidget {
+  final TodoList todoList;
 
-  const TodoList({
+  const TodoListPage({
       super.key,
-      required this.pageTitle,
+      required this.todoList,
     });
 
 
@@ -17,7 +18,7 @@ class TodoList extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;    
 
     return Scaffold(
-      appBar: header(colors, pageTitle),
+      appBar: header(colors, todoList.title, context, true),
 
       body: Padding(
         padding: const EdgeInsets.only(top: 32),

@@ -8,7 +8,10 @@ extension AppColors on ColorScheme {
   Color get backgroundColor => Color(0xFF2E073F);
   Color get secondBackgroundColor => Color(0xFF7A1CAC);
   Color get selectionColor => Color(0xFFAD49E1);
+  
   Color get textColor => Color(0xFFEBD3F8);
+  Color get subTextColor => Color(0xCCEBD3F8);
+  Color get editingTextColor => Color(0xFFA38EAE);
 }
 
 
@@ -18,6 +21,8 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +34,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: "Todo App",
-        home: TodoListOverview(),
+        home: TodoListOverviewPage(),
         theme: ThemeData(
           scaffoldBackgroundColor: colors.backgroundColor
         )

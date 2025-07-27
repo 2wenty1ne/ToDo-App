@@ -1,9 +1,14 @@
 
-class TodoList {
-  final int id;
-  final String title;
+import 'package:todo_app_frontend/models/list_item_interface.dart';
+
+class TodoList implements ListableItem{
+  @override
+  String title;
+  final String id;
   final DateTime createdAt;
-  final DateTime updatedAt;
+  DateTime updatedAt;
+
+  bool isInitial = false;
 
   TodoList({
     required this.id,
@@ -11,6 +16,20 @@ class TodoList {
     required this.createdAt,
     required this.updatedAt,
   });
+
+  @override
+  bool getInitialStatus() {
+    return isInitial;
+  }
+
+  void setInitial(bool status) {
+    isInitial = status;
+  }
+
+  void updateFrom(TodoList other) {
+    title = other.title;
+    updatedAt = other.updatedAt;
+  }
 
   factory TodoList.fromJson(Map<String, dynamic> json) {
     return TodoList(
