@@ -2,8 +2,11 @@ package Utils
 
 import (
 	"fmt"
+
+	"github.com/go-playground/validator/v10"
 )
 
+var jsonValidator = validator.New()
 
 const (
 	maxTitleLength = 255
@@ -59,6 +62,10 @@ func (r *DeleteTodoGroupRequest) Validate() error {
 
 //? TODO
 func (r *CreateTodoRequest) Validate() error {
+	if err := jsonValidator.Struct(r); err != nil {
+		return err
+	}
+
 	titleErr := CheckTitle(r.Title, maxTitleLength)
 	if titleErr != nil {
 		return titleErr
@@ -68,12 +75,7 @@ func (r *CreateTodoRequest) Validate() error {
 		return fmt.Errorf("description must be less than 1000 characters")
 	}
 
-	todoListIDErr := CheckID(r.TodoListID)
-	if todoListIDErr != nil {
-		return todoListIDErr
-	}
-
-	return CheckID(r.TodoGroupID)
+	return nil
 }
 
 func (r *ReadTodosRequest) Validate() error {
@@ -95,7 +97,7 @@ func (r *UpdateTodoRequest) Validate() error {
 		return fmt.Errorf("description must be less than 1000 characters")
 	}
 
-	return CheckID(r.TodoGroupID)
+	return nil
 }
 
 func (r *DeleteTodoRequest) Validate() error {

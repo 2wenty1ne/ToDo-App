@@ -118,23 +118,32 @@ func (s *DBService) DeleteTodoList(req *Utils.DeleteTodoListRequest) error {
 
 
 
-
-//TODO Maybe anpassen an neues DB Schema
+//? TODO
 func (s *DBService) CreateTodo(req *Utils.CreateTodoRequest) (*Utils.Todo, error) {
-	query := 
-	`INSERT INTO "todo_items"
-	("title", "description")
-	VALUES ($1, $2)
-	RETURNING id, title, description, completed, has_subtasks, created_at`
+	query :=
+	`INSERT INTO "todos"
+	("title", "description", "todo_list_id", "todo_group_id")
+	VALUES ($1, $2, $3, $4)
+	RETURNING id, title, description, completed, todo_list_id, todo_group_id, created_at, updated_at`
+
+	// var todoGroupID interface{}
+	// if req.TodoGroupID != "" {
+	// 	todoGroupID = req.TodoGroupID
+	// } else {
+	// 	todoGroupID = nil
+	// }
 
 	var todo Utils.Todo
 
-	err := s.db.QueryRow(query, req.Title, req.Description).Scan(
+	err := s.db.QueryRow(query, req.Title, req.Description, req.TodoListID, req.TodoGroupID).Scan(
 		&todo.ID,
 		&todo.Title,
 		&todo.Description,
 		&todo.Completed,
+		&todo.TodoListID,
+		&todo.TodoGroupID,
 		&todo.CreatedAt,
+		&todo.UpdatedAt,
 	)
 
 	if err != nil {
@@ -145,13 +154,83 @@ func (s *DBService) CreateTodo(req *Utils.CreateTodoRequest) (*Utils.Todo, error
 }
 
 
-//TODO Maybe anpassen an neues DB Schema
+func (s *DBService) ReadTodos(req *Utils.ReadTodosRequest) ([]Utils.Todo, error) {
+	query := 
+	`SELECT id, title, description, completed, todo_list_id, todo_group_id, created_at, updated_at
+	FROM "todos"
+	WHERE todo_list_id = $1
+	ORDER BY created_at ASC`
+
+	rows, err := s.db.Query(query, req.TodoListID)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to query todo: %w", err)
+	}
+	defer rows.Close()
+
+	var todos []Utils.Todo
+
+	for rows.Next() {
+		var todo Utils.Todo
+
+		err := rows.Scan(
+			&todo.ID,
+			&todo.Title,
+			&todo.Description,
+			&todo.Completed,
+			&todo.TodoListID,
+			&todo.TodoGroupID,
+			&todo.CreatedAt,
+			&todo.UpdatedAt,
+		)
+
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan todo: %w", err)
+		}
+
+		todos = append(todos, todo)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("failed iterating over rows: %w", err)
+	}
+
+	return todos, nil
+}
+
+
+func (s *DBService) UpdateTodo(req *Utils.UpdateTodoRequest) (*Utils.Todo, error) {
+	query :=
+	`UPDATE "todos"
+	SET "title" = $1, "description" = $2, "completed" = $3, "todo_group_id" = $4
+	WHERE id = $5
+	RETURNING id, title, description, completed, todo_list_id, todo_group_id, created_at, updated_at`
+
+	var todo Utils.Todo
+
+	err := s.db.QueryRow(query, req.Title, req.Description, req.Completed, req.TodoGroupID, req.ID).Scan(
+		&todo.ID,
+		&todo.Title,
+		&todo.Description,
+		&todo.Completed,
+		&todo.TodoListID,
+		&todo.TodoGroupID,
+		&todo.CreatedAt,
+		&todo.UpdatedAt,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to update todo: %w", err)
+	}
+
+	return &todo, nil
+}
+
+
 func (s *DBService) DeleteTodo(req *Utils.DeleteTodoRequest) error {
 	query :=
-	`DELETE FROM "todo_items"
-	WHERE id = $1
-	`
-	
+	`DELETE FROM "todos"
+	WHERE id = $1`
+
 	result, err := s.db.Exec(query, req.ID)
 	if err != nil {
 		return fmt.Errorf("failed to delete todo: %w", err)
@@ -159,7 +238,7 @@ func (s *DBService) DeleteTodo(req *Utils.DeleteTodoRequest) error {
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return fmt.Errorf("failed to check delete result: %w", err)
+		return fmt.Errorf("failed to check result: %w", err)
 	}
 
 	if rowsAffected == 0 {
@@ -168,3 +247,4 @@ func (s *DBService) DeleteTodo(req *Utils.DeleteTodoRequest) error {
 
 	return nil
 }
+

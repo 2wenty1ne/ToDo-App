@@ -31,6 +31,8 @@ func SetupRoutes(app *fiber.App, dbService *Database.DBService) {
 	api.Delete("/todoLists", requestHandler.DeleteTodoListHandler)
 
 	api.Post("/todos", requestHandler.CreateTodoHandler)
+	api.Get("/todos", requestHandler.ReadTodosHandler)
+	api.Patch("/todos", requestHandler.UpdateTodoHandler)
 	api.Delete("/todos", requestHandler.DeleteTodoHandler)
 
 

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"log"
 	"strings"
@@ -12,10 +14,15 @@ import (
 )
 
 
+
+//? TODOLIST
 func (h *RequestHandler) CreateTodoListHandler(c *fiber.Ctx) error {
 	var req Utils.CreateTodoListRequest
 
-	if err := c.BodyParser(&req); err != nil {
+	decoder := json.NewDecoder(bytes.NewReader(c.Body()))
+	decoder.DisallowUnknownFields()
+
+	if err := decoder.Decode(&req); err != nil {
 		return h.sendErrorResponse(c, fiber.StatusBadRequest, "Inavlid JSON format", err)
 	}
 
@@ -50,6 +57,7 @@ func (h *RequestHandler) CreateTodoListHandler(c *fiber.Ctx) error {
 }
 
 
+
 func (h *RequestHandler) ReadTodoListsHandler(c *fiber.Ctx) error {
 	todoLists, err := h.dbService.ReadTodoLists()
 	if err != nil {
@@ -67,10 +75,14 @@ func (h *RequestHandler) ReadTodoListsHandler(c *fiber.Ctx) error {
 }
 
 
+
 func (h *RequestHandler) UpdateTodoListHandler(c *fiber.Ctx) error {
 	var req Utils.UpdateTodoListRequest
 
-	if err := c.BodyParser(&req); err != nil {
+	decoder := json.NewDecoder(bytes.NewReader(c.Body()))
+	decoder.DisallowUnknownFields()
+
+	if err := decoder.Decode(&req); err != nil {
 		return h.sendErrorResponse(c, fiber.StatusBadRequest, "Inavlid JSON format", err)
 	}
 
@@ -87,7 +99,7 @@ func (h *RequestHandler) UpdateTodoListHandler(c *fiber.Ctx) error {
 				return h.sendErrorResponse(c, fiber.StatusBadRequest, "Required field cannot be null", err)
 			
 			case "23505": // unique_violation
-				return h.sendErrorResponse(c, fiber.StatusConflict, "Todo with this id already exists", err)
+				return h.sendErrorResponse(c, fiber.StatusConflict, "TodoList with this id already exists", err)
 			
 			case "22001": // string_data_right_truncation
 				return h.sendErrorResponse(c, fiber.StatusBadRequest, "Title too long for database field", err)
@@ -112,10 +124,14 @@ func (h *RequestHandler) UpdateTodoListHandler(c *fiber.Ctx) error {
 }
 
 
+
 func (h* RequestHandler) DeleteTodoListHandler(c *fiber.Ctx) error {
 	var req Utils.DeleteTodoListRequest
 
-	if err := c.BodyParser(&req); err != nil {
+    decoder := json.NewDecoder(bytes.NewReader(c.Body()))
+    decoder.DisallowUnknownFields()
+
+	if err := decoder.Decode(&req); err != nil {
 		return h.sendErrorResponse(c, fiber.StatusBadRequest, "Inavlid JSON format", err)
 	}
 
@@ -144,17 +160,19 @@ func (h* RequestHandler) DeleteTodoListHandler(c *fiber.Ctx) error {
 
 
 
-
-
+//? TODO
 func (h *RequestHandler) CreateTodoHandler(c *fiber.Ctx) error {
 	var req Utils.CreateTodoRequest
 
-	if err := c.BodyParser(&req); err != nil {
+	decoder := json.NewDecoder(bytes.NewReader(c.Body()))
+	decoder.DisallowUnknownFields()
+
+	if err := decoder.Decode(&req); err != nil {
 		return h.sendErrorResponse(c, fiber.StatusBadRequest, "Invalid JSON format", err)
 	}
 
 	if err := req.Validate(); err != nil {
-		return h.sendErrorResponse(c, fiber.StatusBadRequest, "Validation failed", err)
+		return h.sendErrorResponse(c, fiber.StatusBadRequest, "Validation failed ww", err)
 	}
 
 
@@ -186,16 +204,100 @@ func (h *RequestHandler) CreateTodoHandler(c *fiber.Ctx) error {
 }
 
 
+
+func (h *RequestHandler) ReadTodosHandler(c *fiber.Ctx) error {
+	var req Utils.ReadTodosRequest
+
+    decoder := json.NewDecoder(bytes.NewReader(c.Body()))
+    decoder.DisallowUnknownFields()
+
+	if err := decoder.Decode(&req); err != nil {
+		return h.sendErrorResponse(c, fiber.StatusBadRequest, "Inavlid JSON format", err)
+	}
+
+	if err := req.Validate(); err != nil {
+		return h.sendErrorResponse(c, fiber.StatusBadRequest, "Validation failed", err)
+	}
+
+	todos, err := h.dbService.ReadTodos(&req)
+	if err != nil {
+		log.Printf("Database error reading todo: %v", err)
+		return h.sendErrorResponse(c, fiber.StatusInternalServerError, "Failed to create todo", nil)
+	}
+
+	response := Utils.APIResponse{
+		Success: true,
+		Message: fmt.Sprintf("Retrieved %d todos", len(todos)),
+		Data: todos,
+	}
+
+	return c.Status(fiber.StatusOK).JSON(response)
+}
+
+
+
+func (h *RequestHandler) UpdateTodoHandler(c *fiber.Ctx) error {
+	var req Utils.UpdateTodoRequest
+
+    decoder := json.NewDecoder(bytes.NewReader(c.Body()))
+    decoder.DisallowUnknownFields()
+
+	if err := decoder.Decode(&req); err != nil {
+		return h.sendErrorResponse(c, fiber.StatusBadRequest, "Inavlid JSON format", err)
+	}
+
+	if err := req.Validate(); err != nil {
+		return h.sendErrorResponse(c, fiber.StatusBadRequest, "Validation failed", err)
+	}
+
+
+	todo, err := h.dbService.UpdateTodo(&req)
+	if err != nil {
+		//? DB Errors
+		// switch err.(*pq.Error).Code {
+		// 	case "23502": // not_null_violation
+		// 		return h.sendErrorResponse(c, fiber.StatusBadRequest, "Required field cannot be null", err)
+			
+		// 	case "23505": // unique_violation
+		// 		return h.sendErrorResponse(c, fiber.StatusConflict, "Todo with this id already exists", err)
+			
+		// 	case "22001": // string_data_right_truncation
+		// 		return h.sendErrorResponse(c, fiber.StatusBadRequest, "Title too long for database field", err)
+			
+		// 	case "42703": // undefined_column (rare, but if column names are dynamic)
+		// 		return h.sendErrorResponse(c, fiber.StatusInternalServerError, "Database schema error", err)
+		// 	}
+		
+		//? Other Errors
+		log.Printf("Database error creating todo: %v", err)
+		return h.sendErrorResponse(c, fiber.StatusInternalServerError, "Failed to create todo", nil)
+	}
+
+	response := Utils.APIResponse{
+		Success: true,
+		Message: "Updated Todo successfully",
+		Data: todo,
+	}
+
+	return c.Status(fiber.StatusOK).JSON(response)
+}
+
+
+
 func (h *RequestHandler) DeleteTodoHandler(c *fiber.Ctx) error {
 	var req Utils.DeleteTodoRequest
 
-	if err := c.BodyParser(&req); err != nil {
+    decoder := json.NewDecoder(bytes.NewReader(c.Body()))
+    decoder.DisallowUnknownFields()
+
+	if err := decoder.Decode(&req); err != nil {
 		return h.sendErrorResponse(c, fiber.StatusBadRequest, "Invalid JSON format", err)
 	}
 
 	if err := req.Validate(); err != nil {
 		return h.sendErrorResponse(c, fiber.StatusBadRequest, "Validation failed", err)
 	}
+
 
 	err := h.dbService.DeleteTodo(&req)
 	if err != nil {
