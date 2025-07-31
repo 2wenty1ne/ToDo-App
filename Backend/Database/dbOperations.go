@@ -6,7 +6,6 @@ import (
 	"github.com/2wenty1ne/ToDo-App/Utils"
 )
 
-
 //? TODO LISTS
 func (s* DBService) CreateTodoList(req *Utils.CreateTodoListRequest) (*Utils.TodoList, error) {
 	query := 
@@ -44,7 +43,7 @@ func (s *DBService) ReadTodoLists() ([]Utils.TodoList, error) {
 	}
 	defer rows.Close()
 
-	var todoLists []Utils.TodoList
+	todoLists := []Utils.TodoList{}
 
 	for rows.Next() {
 		var todoList Utils.TodoList
@@ -126,13 +125,6 @@ func (s *DBService) CreateTodo(req *Utils.CreateTodoRequest) (*Utils.Todo, error
 	VALUES ($1, $2, $3, $4)
 	RETURNING id, title, description, completed, todo_list_id, todo_group_id, created_at, updated_at`
 
-	// var todoGroupID interface{}
-	// if req.TodoGroupID != "" {
-	// 	todoGroupID = req.TodoGroupID
-	// } else {
-	// 	todoGroupID = nil
-	// }
-
 	var todo Utils.Todo
 
 	err := s.db.QueryRow(query, req.Title, req.Description, req.TodoListID, req.TodoGroupID).Scan(
@@ -168,7 +160,7 @@ func (s *DBService) ReadTodos(req *Utils.ReadTodosRequest) ([]Utils.Todo, error)
 	}
 	defer rows.Close()
 
-	var todos []Utils.Todo
+	todos := []Utils.Todo{}
 
 	for rows.Next() {
 		var todo Utils.Todo

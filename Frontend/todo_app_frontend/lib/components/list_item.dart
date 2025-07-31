@@ -102,12 +102,6 @@ class _ListItemState<T extends ListableItem> extends State<ListItem<T>> {
               : GestureDetector(
                 onTap: () {
                   widget.nextPageFunction(context, widget.listItem);
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: ((context) => TodoListPage(todoList: widget.listItem,))
-                  //   )
-                  // );
                 },
 
                 child: Container(

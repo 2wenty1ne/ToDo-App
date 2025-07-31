@@ -1,4 +1,3 @@
-
 import 'package:todo_app_frontend/models/list_item_interface.dart';
 
 class TodoList implements ListableItem{

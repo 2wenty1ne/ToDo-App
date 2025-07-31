@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"time"
 
 	"github.com/2wenty1ne/ToDo-App/Database"
@@ -31,7 +32,7 @@ func SetupRoutes(app *fiber.App, dbService *Database.DBService) {
 	api.Delete("/todoLists", requestHandler.DeleteTodoListHandler)
 
 	api.Post("/todos", requestHandler.CreateTodoHandler)
-	api.Get("/todos", requestHandler.ReadTodosHandler)
+	api.Post("/alltodos", requestHandler.ReadTodosHandler)
 	api.Patch("/todos", requestHandler.UpdateTodoHandler)
 	api.Delete("/todos", requestHandler.DeleteTodoHandler)
 
@@ -55,5 +56,6 @@ func (h *RequestHandler) sendErrorResponse(c *fiber.Ctx, statusCode int, message
 		response.Error = err.Error()
 	}
 
+	log.Printf("Error: %s", response.Error)
 	return c.Status(statusCode).JSON(response)
 }

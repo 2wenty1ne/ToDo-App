@@ -8,19 +8,18 @@ AppBar header(ColorScheme colors, String pageTitle, BuildContext context, [bool 
     toolbarHeight: 80,
     title: CustomText(content: pageTitle, fontSize: 32),
     centerTitle: true,
-    //? Gesture detection für event handler?
     leading: 
-    showBackButton
-    ? IconButton(
-      onPressed: () {
-        Navigator.pop(context);
-      },
-      icon: Icon(
-          Icons.arrow_back_ios,
-          color: colors.textColor,
-          size: 28,
-      ),
-    ) 
-    : null,
+      showBackButton
+      ? IconButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        icon: Icon(
+            Icons.arrow_back_ios,
+            color: colors.textColor,
+            size: 28,
+        ),
+      ) 
+      : null,
   );
 }

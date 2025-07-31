@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_app_frontend/components/footer.dart';
 import 'package:todo_app_frontend/components/header.dart';
 import 'package:todo_app_frontend/components/list_item.dart';
 import 'package:todo_app_frontend/components/nav_circle.dart';
 import 'package:todo_app_frontend/main.dart';
 import 'package:todo_app_frontend/models/list_item_interface.dart';
-import 'package:todo_app_frontend/models/todo_list.dart';
+import 'package:todo_app_frontend/models/todo_list_model.dart';
 import 'package:todo_app_frontend/pages/todo_list_page.dart';
 import 'package:todo_app_frontend/providers/todo_app_provider.dart';
 
@@ -37,6 +38,11 @@ class TodoListOverviewPageState extends State<TodoListOverviewPage> {
         builder: ((context) => TodoListPage(todoList: (listItem as TodoList)))
       )
     );
+  }
+
+
+  void createTodoListFunction(BuildContext context) {
+    context.read<TodoAppProvider>().createTodoList();
   }
 
 
@@ -86,19 +92,9 @@ class TodoListOverviewPageState extends State<TodoListOverviewPage> {
           );
         },
       ),
-
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: colors.secondBackgroundColor,
-        shape: CircleBorder(),
-        onPressed: () {
-          context.read<TodoAppProvider>().createTodoList();
-        },
-        child: Icon(
-          Icons.add,
-          color: colors.textColor,
-          size: 40,
-        ),
-      )
+      floatingActionButton: floatingActionButton(colors, context, createTodoListFunction)
     );
   }
+
+
 }
