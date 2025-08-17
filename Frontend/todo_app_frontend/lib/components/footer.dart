@@ -2,12 +2,13 @@
 import 'package:todo_app_frontend/main.dart';
 
 FloatingActionButton floatingActionButton(
-    ColorScheme colors, BuildContext context, Function function
+    ColorScheme colors, 
+    VoidCallback onPressed
   ) {
     return FloatingActionButton(
       backgroundColor: colors.secondBackgroundColor,
       shape: CircleBorder(),
-      onPressed: () => function(context),
+      onPressed: onPressed,
       child: Icon(
         Icons.add,
         color: colors.textColor,

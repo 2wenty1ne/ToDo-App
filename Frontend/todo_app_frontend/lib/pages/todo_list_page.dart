@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app_frontend/components/footer.dart';
 import 'package:todo_app_frontend/components/header.dart';
-import 'package:todo_app_frontend/components/list_item.dart';
+import 'package:todo_app_frontend/components/listItems/list_item.dart';
 import 'package:todo_app_frontend/components/nav_circle.dart';
 import 'package:todo_app_frontend/main.dart';
 import 'package:todo_app_frontend/models/list_item_interface.dart';
@@ -40,14 +40,9 @@ class TodoListPageState extends State<TodoListPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: ((context) => TodoPage())
+        builder: ((context) => TodoPage(todo: todo as Todo,))
       ),
     );
-  }
-
-
-  void createTodoFunction(BuildContext context) {
-    context.read<TodoAppProvider>().createTodo(todolist.id);
   }
 
 
@@ -63,11 +58,16 @@ class TodoListPageState extends State<TodoListPage> {
           final todos = provider.todos;
 
           return Padding(
-            padding: const EdgeInsets.only(top: 32),
+            padding: const EdgeInsets.fromLTRB(
+              AppDimensions.vertInset, 
+              AppDimensions.topBodyInset, 
+              AppDimensions.vertInset, 
+              0
+            ),
             child: Container(
               color: colors.backgroundColor,
 
-              //? Actuall body
+              //? Actual body
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,11 +75,16 @@ class TodoListPageState extends State<TodoListPage> {
                 children: [
                   Column(
                     children: todos.map((todo) =>
+
                       ListItem<Todo>(
                         amountText: "0 Subtasks",
                         listItem: todo,
                         deleteFunction: provider.deleteTodo,
-                        updateFunction: provider.updateTodo,
+
+                        updateFunction: (Todo todo, dynamic newCompleted) {
+                          provider.updateTodo(todo, todo.title, todo.description, newCompleted);
+                        },
+
                         nextPageFunction: nextPageFunction,
                       ),
                     ).toList()
@@ -96,7 +101,9 @@ class TodoListPageState extends State<TodoListPage> {
           );
         },
       ),
-      floatingActionButton: floatingActionButton(colors, context, createTodoFunction),
+      floatingActionButton: floatingActionButton(colors, () {
+        context.read<TodoAppProvider>().createTodo(widget.todoList.id);
+      }),
     );
   }
 }

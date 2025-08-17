@@ -14,6 +14,11 @@ extension AppColors on ColorScheme {
   Color get editingTextColor => Color(0xFFA38EAE);
 }
 
+class AppDimensions {
+  static const double vertInset = 24.0;
+  static const double topBodyInset = 32.0;
+}
+
 
 void main() {
   runApp(const MyApp());

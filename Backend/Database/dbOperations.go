@@ -121,13 +121,13 @@ func (s *DBService) DeleteTodoList(req *Utils.DeleteTodoListRequest) error {
 func (s *DBService) CreateTodo(req *Utils.CreateTodoRequest) (*Utils.Todo, error) {
 	query :=
 	`INSERT INTO "todos"
-	("title", "description", "todo_list_id", "todo_group_id")
-	VALUES ($1, $2, $3, $4)
+	("title", "todo_list_id", "todo_group_id")
+	VALUES ($1, $2, $3)
 	RETURNING id, title, description, completed, todo_list_id, todo_group_id, created_at, updated_at`
 
 	var todo Utils.Todo
 
-	err := s.db.QueryRow(query, req.Title, req.Description, req.TodoListID, req.TodoGroupID).Scan(
+	err := s.db.QueryRow(query, req.Title, req.TodoListID, req.TodoGroupID).Scan(
 		&todo.ID,
 		&todo.Title,
 		&todo.Description,

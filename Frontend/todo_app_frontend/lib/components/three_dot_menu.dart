@@ -19,7 +19,8 @@ class ThreeDotsMenuButton extends StatelessWidget {
       width: 20.0,
       child: IconButton(
         padding: EdgeInsets.all(0),
-        onPressed: () => onPressed(context), icon: 
+        onPressed: () => onPressed(context), 
+        icon: 
           Icon(
             Icons.more_vert,
             color: Colors.black,

@@ -71,7 +71,6 @@ type Todo struct {
 
 type CreateTodoRequest struct {
 	Title       string 	  		`json:"title" validate:"required"`
-	Description string 	  		`json:"description" validate:"required"`
 	TodoListID	string	  		`json:"todo_list_id" validate:"required,uuid"`
 	TodoGroupID	sql.NullString 	`json:"todo_group_id"`
 }

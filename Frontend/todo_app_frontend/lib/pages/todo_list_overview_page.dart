@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app_frontend/components/footer.dart';
 import 'package:todo_app_frontend/components/header.dart';
-import 'package:todo_app_frontend/components/list_item.dart';
+import 'package:todo_app_frontend/components/listItems/list_item.dart';
 import 'package:todo_app_frontend/components/nav_circle.dart';
 import 'package:todo_app_frontend/main.dart';
 import 'package:todo_app_frontend/models/list_item_interface.dart';
@@ -41,11 +41,6 @@ class TodoListOverviewPageState extends State<TodoListOverviewPage> {
   }
 
 
-  void createTodoListFunction(BuildContext context) {
-    context.read<TodoAppProvider>().createTodoList();
-  }
-
-
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
@@ -60,7 +55,12 @@ class TodoListOverviewPageState extends State<TodoListOverviewPage> {
           final todoLists = provider.todoLists;
         
           return Padding(
-            padding: const EdgeInsets.only(top: 32),
+            padding: const EdgeInsets.fromLTRB(
+              AppDimensions.vertInset, 
+              AppDimensions.topBodyInset, 
+              AppDimensions.vertInset, 
+              0
+            ),
             child: Container(
               color: colors.backgroundColor,
           
@@ -70,14 +70,20 @@ class TodoListOverviewPageState extends State<TodoListOverviewPage> {
                 children: [
                   //? Todo list items
                   Column(
-                    children: todoLists.map((todoList) => 
+                    children: todoLists.map((todoList) =>
+
                       ListItem<TodoList>(
                         amountText: "0 Tasks", 
                         listItem: todoList, 
                         deleteFunction: provider.deleteTodoList,
-                        updateFunction: provider.updateTodoList,
+
+                        updateFunction: (TodoList todolist, dynamic newTitle) {
+                          provider.updateTodoList(todolist, newTitle);
+                        },
+
                         nextPageFunction: nextPageFunction,
                       )
+
                     ).toList()
                   ),
           
@@ -92,7 +98,9 @@ class TodoListOverviewPageState extends State<TodoListOverviewPage> {
           );
         },
       ),
-      floatingActionButton: floatingActionButton(colors, context, createTodoListFunction)
+      floatingActionButton: floatingActionButton(colors, () {
+        context.read<TodoAppProvider>().createTodoList();
+      })
     );
   }
 

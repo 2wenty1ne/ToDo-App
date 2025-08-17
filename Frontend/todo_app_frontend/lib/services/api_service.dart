@@ -148,14 +148,12 @@ class ApiService {
 
   static Future<Map<String, dynamic>> createTodo({
     required String title,
-    required String description,
     required String todoListID,
     String? todoGroupID,
   }) async {
     try {
       final Map<String, dynamic> requestBody = {
         'title': title,
-        'description': description,
         'todo_list_id': todoListID,
       };
 

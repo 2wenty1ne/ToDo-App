@@ -162,7 +162,6 @@ class TodoAppProvider extends ChangeNotifier{
     try {
       final response = await ApiService.createTodo(
         title: "New todo", 
-        description: "", 
         todoListID: todoListID
       );
 
@@ -186,15 +185,28 @@ class TodoAppProvider extends ChangeNotifier{
 
 
   //? Update Todo
-  Future<void> updateTodo(Todo todo, String title) async {
+  Future<void> updateTodo(Todo todo, String title, String description, bool completed) async {
     _setLoading(true);
     _error = null;
 
     try {
+      final response = await ApiService.updateTodo(
+        id: todo.id, 
+        title: title, 
+        description: description, 
+        completed: completed
+      );
 
+      final data = response['data'];
+
+      final updatedTodo = Todo.fromJson(data);
+
+      todo.updateFrom(updatedTodo);
+      todo.setInitial(false);
     }
     catch(e) {
-
+      _error = e.toString();
+      print('Error updating todo: $e');
     }
     finally {
       _setLoading(false);

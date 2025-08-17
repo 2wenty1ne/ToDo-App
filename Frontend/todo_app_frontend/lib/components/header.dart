@@ -10,14 +10,17 @@ AppBar header(ColorScheme colors, String pageTitle, BuildContext context, [bool 
     centerTitle: true,
     leading: 
       showBackButton
-      ? IconButton(
-        onPressed: () {
-          Navigator.pop(context);
-        },
-        icon: Icon(
-            Icons.arrow_back_ios,
-            color: colors.textColor,
-            size: 28,
+      ? Padding(
+        padding: const EdgeInsets.only(left: AppDimensions.vertInset),
+        child: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(
+              Icons.arrow_back_ios,
+              color: colors.textColor,
+              size: 28,
+          ),
         ),
       ) 
       : null,

@@ -71,10 +71,6 @@ func (r *CreateTodoRequest) Validate() error {
 		return titleErr
 	}
 
-	if len(r.Description) > maxDescriptionLength {
-		return fmt.Errorf("description must be less than 1000 characters")
-	}
-
 	return nil
 }
 
